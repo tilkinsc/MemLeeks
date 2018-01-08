@@ -1,15 +1,13 @@
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <stdlib.h> // size_t, memory allocation
 
-#include "leak.h"
+#include "leak.h" // memory allocation
 
-#include "darr.h"
+#include "darr.h" // array_*
 
 
-#define INIT_SIZE	4
-#define EXPAND_SIZE	4
+#define INIT_SIZE	10
+#define EXPAND_SIZE	10
 
 
 static Array* arr = 0;
@@ -27,6 +25,10 @@ void _mem_leak_close() {
 }
 
 
+void* _malloc(size_t size) {
+	return __malloc(size, 0);
+}
+
 void* __malloc(size_t size, size_t line) {
 	vp_info* cont = malloc(sizeof(vp_info));
 	cont->ptr = malloc(size);
@@ -37,16 +39,10 @@ void* __malloc(size_t size, size_t line) {
 	return cont->ptr;
 }
 
-void* _malloc(size_t size) {
-	vp_info* cont = malloc(1 * sizeof(vp_info));
-	cont->ptr = malloc(size);
-	cont->size = size;
-	cont->line = 0;
-	cont->ftype = MALLOC;
-	array_push(arr, cont);
-	return cont->ptr;
-}
 
+void* _calloc(size_t nmemb, size_t size) {
+	return __calloc(nmemb, size, 0);
+}
 
 void* __calloc(size_t nmemb, size_t size, size_t line) {
 	vp_info* cont = malloc(1 * sizeof(vp_info));
@@ -58,14 +54,22 @@ void* __calloc(size_t nmemb, size_t size, size_t line) {
 	return cont->ptr;
 }
 
-void* _calloc(size_t nmemb, size_t size) {
-	vp_info* cont = malloc(1 * sizeof(vp_info));
-	cont->ptr = calloc(nmemb, size);
-	cont->size = nmemb * size;
-	cont->line = 0;
-	cont->ftype = CALLOC;
-	array_push(arr, cont);
-	return cont->ptr;
+
+void* _realloc(void* ptr, size_t new_size) {
+	return __realloc(ptr, new_size, 0);
+}
+
+void* __realloc(void* ptr, size_t new_size, size_t line) {
+	for(size_t i=0; i<arr->size; i++) {
+		vp_info* info = (vp_info*) array_get(arr, i);
+		if(info->ptr == ptr) {
+			info->ptr = realloc(ptr, new_size);
+			info->size = new_size;
+			info->line = line;
+			return info->ptr;
+		}
+	}
+	return 0;
 }
 
 
