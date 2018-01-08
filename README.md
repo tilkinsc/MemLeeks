@@ -5,6 +5,28 @@ There is probably better out there. This should be laggy as heck in a real, big 
 
 Did you know? Using `__LINE__` in your code is a macro that expands to the line number your code is on?
 
+To use, follow this format:  
+```
+size_t time = current_time();
+some_expensive_function();
+size_t time2 = current_time();
+printf("%zu\n", time2 - time);
+```
+translated:  
+```
+size_t size = _gather_size();
+void* stuff = __malloc(sizeof(void*), __LINE__);
+use_pointer(stuff);
+function_that_should_free_pointer(stuff);
+size_t end_size = _gather_size();
+printf("%zu\n", end_size - size); // error if > 0
+vp_info info = _gather_get(end_size - 1);
+if(end_size - size != 0)
+	fprintf(stderr,
+		"Warning: Line %zu ptr %p of type %s length %zu was not cleaned up!\n",
+		info->line, info->ptr, (info->ftype == 0 ? "MALLOC" : "CALLOC"), info->size);
+```
+
 <details><summary>Project Test Output</summary><p>
   
 ```
