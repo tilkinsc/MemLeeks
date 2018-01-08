@@ -1,5 +1,5 @@
 # MemLeeks
-Very simplex methodology for detecting memory leaks in C programs  
+Very simplex, cross-platform methodology for detecting memory leaks in C programs  
 
 There is probably better out there. This should be laggy as heck in a real, big program. Although, for testing certain variables, this does justice.
 
