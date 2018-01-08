@@ -27,8 +27,8 @@ int main(int argc, char** argv)
 	ex_str->b = (size_t) 2;
 	ex_str->c = (int) 3;
 	ex_str->d = (int) 4;
-	ex_str->ptr1 = __malloc(sizeof(ExampleStruct), __LINE__);
-	ex_str->ptr2 = __calloc(1, sizeof(ExampleStruct), __LINE__);
+	ex_str->ptr1 = __malloc(sizeof(size_t), __LINE__);
+	ex_str->ptr2 = __calloc(1, sizeof(size_t), __LINE__);
 	
 	
 	fprintf(stdout, "a %Iu\n", ex_str->a);
@@ -44,18 +44,21 @@ int main(int argc, char** argv)
 	fprintf(stdout, "There are %Iu malloc/calloc handles\n", size);
 	for(size_t i=0; i<size; i++) {
 		ptr_inf = _gather_get(i);
-		fprintf(stdout, "On line %Iu pointer %p exists of type %s\n", ptr_inf->line, ptr_inf->ptr, (ptr_inf->ftype == 0 ? "MALLOC" : "CALLOC"));
+		fprintf(stdout, "On line %Iu pointer %p exists of type %s length %Iu\n", ptr_inf->line, ptr_inf->ptr, (ptr_inf->ftype == 0 ? "MALLOC" : "CALLOC"), ptr_inf->size);
 	}
 	
+	fprintf(stdout, "\nRealloced %p", ex_str->ptr1);
+	ex_str->ptr1 = __realloc(ex_str->ptr1, 10 * sizeof(size_t), __LINE__);
+	fprintf(stdout, " to %p\n", ex_str->ptr1);
 	
 	fputs("\nCleaning environment!\n\n", stdout);
-	_free(ex_str->ptr1);
+	_free(ex_str);
 	
 	size = _gather_size();
 	fprintf(stdout, "There are %Iu malloc/calloc handles\n", size);
 	for(size_t i=0; i<size; i++) {
 		ptr_inf = _gather_get(i);
-		fprintf(stdout, "On line %Iu pointer %p exists of type %s\n", ptr_inf->line, ptr_inf->ptr, (ptr_inf->ftype == 0 ? "MALLOC" : "CALLOC"));
+		fprintf(stdout, "On line %Iu pointer %p exists of type %s length %Iu\n", ptr_inf->line, ptr_inf->ptr, (ptr_inf->ftype == 0 ? "MALLOC" : "CALLOC"), ptr_inf->size);
 	}
 	
 	_mem_leak_close();
