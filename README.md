@@ -20,11 +20,12 @@ use_pointer(stuff);
 function_that_should_free_pointer(stuff);
 size_t end_size = _gather_size();
 printf("%zu\n", end_size - size); // error if > 0
-vp_info info = _gather_get(end_size - 1);
-if(end_size - size != 0)
+if(end_size - size != 0) {
+	vp_info info = _gather_get(end_size - 1);
 	fprintf(stderr,
 		"Warning: Line %zu ptr %p of type %s length %zu was not cleaned up!\n",
 		info->line, info->ptr, (info->ftype == 0 ? "MALLOC" : "CALLOC"), info->size);
+}
 ```
 
 <details><summary>Project Test Output</summary><p>
