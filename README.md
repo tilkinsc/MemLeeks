@@ -1,6 +1,8 @@
 # MemLeeks
 Very simplex, cross-platform methodology for detecting memory leaks in C programs  
 
+This simple code proves as a testament to those who suffer mem leaks but don't resolve them.  
+
 There is probably better out there. This should be laggy as heck in a real, big program. Although, for testing certain variables, this does justice.
 
 Did you know? Using `__LINE__` in your code is a macro that expands to the line number your code is on?
